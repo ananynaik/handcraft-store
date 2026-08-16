@@ -18,3 +18,4 @@ authForm.addEventListener('submit',async e=>{e.preventDefault();authMessage.text
 googleLogin.addEventListener('click',async()=>{try{const r=await signInWithPopup(auth,new GoogleAuthProvider());authMessage.textContent=`Welcome${r.user.displayName?', '+r.user.displayName:''}!`;setTimeout(closeAuth,700)}catch(err){authMessage.textContent='Google sign-in was cancelled or failed.'}});
 onAuthStateChanged(auth,user=>{accountButton.setAttribute('aria-label',user?`Account: ${user.email}`:'Login');accountButton.title=user?user.email:'Login'});
 window.addToCart=addToCart;window.removeFromCart=removeFromCart;window.sonaliFirebase={app:firebaseApp,db,auth};renderProducts();renderCart();
+import './mobile-fix.js';
