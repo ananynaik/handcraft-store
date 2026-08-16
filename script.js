@@ -19,3 +19,4 @@ googleLogin.addEventListener('click',async()=>{try{const r=await signInWithPopup
 onAuthStateChanged(auth,user=>{accountButton.setAttribute('aria-label',user?`Account: ${user.email}`:'Login');accountButton.title=user?user.email:'Login'});
 window.addToCart=addToCart;window.removeFromCart=removeFromCart;window.sonaliFirebase={app:firebaseApp,db,auth};renderProducts();renderCart();
 import './mobile-fix.js';
+import './auth-fix.js';
