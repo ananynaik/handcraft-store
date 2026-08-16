@@ -1,3 +1,24 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-analytics.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+// Sonali's Handcrafts Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBeCA_wut1H1_RyOKLfcLXSj-GCb8GOxkY",
+  authDomain: "sonalis-handcrafts.firebaseapp.com",
+  projectId: "sonalis-handcrafts",
+  storageBucket: "sonalis-handcrafts.firebasestorage.app",
+  messagingSenderId: "275433297737",
+  appId: "1:275433297737:web:be6eee5d452c77245dec98",
+  measurementId: "G-4FE43YQE09"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
+const auth = getAuth(firebaseApp);
+try { getAnalytics(firebaseApp); } catch (_) {}
+
 const products=[
  {id:1,name:'Terracotta Vase',desc:'Hand-shaped ceramic décor',price:699,class:'p1'},
  {id:2,name:'Woven Wall Basket',desc:'Natural fiber wall art',price:849,class:'p2'},
@@ -26,6 +47,41 @@ document.getElementById('closeCart').onclick=closeCart;
 overlay.onclick=closeCart;
 menuToggle.onclick=()=>{const open=nav.classList.toggle('open');menuToggle.setAttribute('aria-expanded',String(open))};
 nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',closeMenu));
-document.getElementById('checkout').onclick=()=>{if(!cart.length){alert('Your cart is empty.');return}alert('Demo checkout — payment integration can be added next!')};
-document.getElementById('newsletterForm').addEventListener('submit',e=>{e.preventDefault();document.getElementById('formMessage').textContent='Thanks! You’re on the list.';e.target.reset()});
+
+document.getElementById('checkout').onclick=async()=>{
+  if(!cart.length){alert('Your cart is empty.');return}
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  try{
+    await addDoc(collection(db,'orders'),{
+      items:cart.map(({id,name,price,qty})=>({id,name,price,qty})),
+      total,
+      status:'pending',
+      createdAt:serverTimestamp()
+    });
+    alert('Order saved successfully. Payment integration can be added next.');
+    cart=[];
+    renderCart();
+    closeCart();
+  }catch(error){
+    console.error('Firebase order error:',error);
+    alert('Firebase is connected, but Firestore needs to be enabled/configured before orders can be saved.');
+  }
+};
+
+document.getElementById('newsletterForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=e.target.querySelector('input[type="email"]').value.trim();
+  const message=document.getElementById('formMessage');
+  try{
+    await addDoc(collection(db,'newsletterSubscribers'),{email,createdAt:serverTimestamp()});
+    message.textContent='Thanks! You’re on the list.';
+    e.target.reset();
+  }catch(error){
+    console.error('Firebase newsletter error:',error);
+    message.textContent='Please enable Firestore to save subscriptions.';
+  }
+});
+
+// Exposed for future customer login/signup features.
+window.sonaliFirebase = { app: firebaseApp, db, auth };
 renderProducts();renderCart();
