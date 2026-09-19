@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ConnectChat</title>
+<link rel="stylesheet" href="style.css"></head>
+<body><div class="app">
+<aside><header><div class="brand"><b>●</b><strong>ConnectChat</strong></div><div>⌕　✎　⋮</div></header>
+<div class="search"><input id="search" placeholder="Search chats"></div>
+<div class="filters"><button data-f="all" class="active">All</button><button data-f="unread">Unread</button><button data-f="fav">Favorites</button></div>
+<div id="list"></div></aside>
+<main><div id="empty" class="empty"><div class="bubble">💬</div><h2>ConnectChat</h2><p>Select a chat to start messaging</p></div>
+<section id="chat" class="chat hidden"><header><button id="back">‹</button><div id="avatar" class="avatar"></div><div><strong id="name"></strong><small id="status"></small></div><span class="grow"></span><button>⌕</button><button>⋮</button></header>
+<div id="messages" class="messages"></div>
+<form id="form"><button type="button">☺</button><input id="input" placeholder="Type a message" autocomplete="off"><button type="button">＋</button><button class="send">➤</button></form></section></main></div>
+<script src="app.js"></script></body></html>
